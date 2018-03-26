@@ -21,20 +21,44 @@ geometry::Square::~Square() {
 
 }
 
-double geometry::Square::Circumference() {
-    double result = 0;
-    double temp = pow(a_.GetX() - b_.GetX(), 2) + pow(a_.GetY() - b_.GetY(), 2);
-    result += 2*sqrt(temp);
-    temp = pow(c_.GetX() - b_.GetX(), 2) + pow(c_.GetY() - b_.GetY(), 2);
-    result += 2*sqrt(temp);
+double geometry::Square::SideLengthPower(Point a, Point b) {
+    return pow(a.GetX() - b.GetX(), 2) + pow(a.GetY() - b.GetY(), 2);
+}
+
+bool geometry::Square::IsSquare(){
+    bool result = false;
+    double diagonal_pow = SideLengthPower(a_, d_);
+    double ab_pow = SideLengthPower(a_, b_);
+    double ac_pow = SideLengthPower(a_, c_);
+    double bd_pow = SideLengthPower(b_, d_);
+    double cd_pow = SideLengthPower(c_, d_);
+    if(diagonal_pow == ab_pow + ac_pow) {
+        if(diagonal_pow == bd_pow + cd_pow){
+            result = true;
+        }
+    }
     return result;
 }
 
+double geometry::Square::Circumference() {
+    if (IsSquare()) {
+        double result = 0;
+        double temp = SideLengthPower(a_, b_);
+        result += 4 * sqrt(temp);
+        return result;
+    }
+    else {
+        return 0;
+    }
+}
+
 double geometry::Square::Area() {
-    double temp = pow(a_.GetX() - b_.GetX(), 2) + pow(a_.GetY() - b_.GetY(), 2);
-    double one_side = sqrt(temp);
-    temp = pow(c_.GetX() - b_.GetX(), 2) + pow(c_.GetY() - b_.GetY(), 2);
-    double two_side = sqrt(temp);
-    double result = one_side * two_side;
-    return result;
+    if(IsSquare()) {
+        double temp = SideLengthPower(a_, b_);
+        double side = sqrt(temp);
+        return side * side;
+    }
+    else {
+        return 0;
+    }
 }

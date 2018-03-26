@@ -13,13 +13,12 @@ namespace geometry {
     class Square {
     public:
         Square();
-
         Square(Point a, Point b, Point c, Point d);
-
         ~Square();
 
+        double SideLengthPower(Point a, Point b);
+        bool IsSquare();
         double Circumference();
-
         double Area();
 
     private:
