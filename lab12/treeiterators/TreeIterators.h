@@ -106,7 +106,7 @@ namespace tree {
     template<typename T>
     class InOrderTreeIterator {
     public:
-        InOrderTreeIterator(Node<T> *t);//unique_ptr<Node<T>> &t);
+        InOrderTreeIterator(Node<T> *t);
         ~InOrderTreeIterator() {};
 
         InOrderTreeIterator(const InOrderTreeIterator<T> &t);
@@ -122,9 +122,9 @@ namespace tree {
     };
 
     template<typename T>
-    InOrderTreeIterator<T>::InOrderTreeIterator(Node<T> *t) {//unique_ptr<Node<T>> &t) {
+    InOrderTreeIterator<T>::InOrderTreeIterator(Node<T> *t) {
         root_ = t;
-        iterator_ = t;//.get();
+        iterator_ = t;
         while (iterator_->left_ != nullptr) {
             iterator_ = iterator_->left_.get();
         }
@@ -189,7 +189,7 @@ namespace tree {
     template<typename T>
     class PostOrderTreeIterator {
     public:
-        PostOrderTreeIterator(Node<T> *t);//unique_ptr<Node<T>> &t);
+        PostOrderTreeIterator(Node<T> *t);
         ~PostOrderTreeIterator() {};
 
         PostOrderTreeIterator(const PostOrderTreeIterator<T> &t);
@@ -205,9 +205,9 @@ namespace tree {
     };
 
     template<typename T>
-    PostOrderTreeIterator<T>::PostOrderTreeIterator(Node<T> *t) {//unique_ptr<Node<T>> &t) {
+    PostOrderTreeIterator<T>::PostOrderTreeIterator(Node<T> *t) {
         root_ = t;
-        iterator_ = t;//.get();
+        iterator_ = t;
         bool is_found = false;
         while (!is_found) {
             while (iterator_->left_ != nullptr) {
@@ -226,45 +226,37 @@ namespace tree {
     template<typename T>
     PostOrderTreeIterator<T> &PostOrderTreeIterator<T>::operator++() {
         Node<T> *parent;
-        if(iterator_ == root_) {
+        if (iterator_ == root_) {
             iterator_ = nullptr;
-        }
-        else {
+        } else {
             bool is_found = false;
-            bool is_changed = false;
-//            while (!is_found) {
-                bool parent_is_found = false;
-                parent = root_;
-                while (!parent_is_found) {
-                    if (parent->value_ > iterator_->value_ && parent->left_.get() != iterator_) {
-                        parent = parent->left_.get();
-                    } else if (parent->value_ <= iterator_->value_ && parent->right_.get() != iterator_) {
-                        parent = parent->right_.get();
-                    } else {
-                        parent_is_found = true;
+            bool parent_is_found = false;
+            parent = root_;
+            while (!parent_is_found) {
+                if (parent->value_ > iterator_->value_ && parent->left_.get() != iterator_) {
+                    parent = parent->left_.get();
+                } else if (parent->value_ <= iterator_->value_ && parent->right_.get() != iterator_) {
+                    parent = parent->right_.get();
+                } else {
+                    parent_is_found = true;
+                }
+            }
+            if (parent->left_.get() == iterator_ && parent->right_ != nullptr) {
+                iterator_ = parent->right_.get();
+                while (!is_found) {
+                    while (iterator_->left_ != nullptr) {
+                        iterator_ = iterator_->left_.get();
+                    }
+                    if (iterator_ == parent->right_.get() && iterator_->right_ != nullptr) {
+                        parent = iterator_;
+                        iterator_ = iterator_->right_.get();
+                    }
+                    if (iterator_->left_ == nullptr && iterator_->right_ == nullptr) {
+                        is_found = true;
                     }
                 }
-                if (parent->left_.get() == iterator_ && parent->right_ != nullptr) {
-                    iterator_ = parent->right_.get();
-                    while (!is_found) {
-//                        bool is_changed = false;
-                        while (iterator_->left_ != nullptr) {
-                            iterator_ = iterator_->left_.get();
-//                            is_found = true;
-                        }
-                        if (iterator_ == parent->right_.get() && iterator_->right_ != nullptr) {
-                            parent = iterator_;
-                            iterator_ = iterator_->right_.get();
-                        }
-                        if (iterator_->left_ == nullptr && iterator_->right_ == nullptr) {
-                            is_found = true;
-                        }
-                    }
-//                    is_found = true;
-                } else {
-                    iterator_ = parent;
-//                    is_found = true;
-//                }
+            } else {
+                iterator_ = parent;
             }
         }
         return *this;
@@ -288,7 +280,7 @@ namespace tree {
     template<typename T>
     class PreOrderTreeIterator {
     public:
-        PreOrderTreeIterator(Node<T> *t);//unique_ptr<Node<T>> &t);
+        PreOrderTreeIterator(Node<T> *t);
         ~PreOrderTreeIterator() {};
 
         PreOrderTreeIterator(const PreOrderTreeIterator<T> &t);
@@ -304,9 +296,9 @@ namespace tree {
     };
 
     template<typename T>
-    PreOrderTreeIterator<T>::PreOrderTreeIterator(Node<T> *t) {//unique_ptr<Node<T>> &t) {
+    PreOrderTreeIterator<T>::PreOrderTreeIterator(Node<T> *t) {
         root_ = t;
-        iterator_ = t;//.get();
+        iterator_ = t;
     }
 
     template<typename T>
@@ -317,17 +309,7 @@ namespace tree {
         } else if (iterator_->right_ != nullptr) {
             iterator_ = iterator_->right_.get();
         } else {
-
             bool is_found = false;
-//        bool is_repeat = false;
-//        while (!is_found) {
-//            if (!is_repeat && iterator_->right_ != nullptr) {
-//                iterator_ = iterator_->right_.get();
-//                while (iterator_->left_ != nullptr) {
-//                    iterator_ = iterator_->left_.get();
-//                }
-//                is_found = true;
-//            } else {
             while (!is_found) {
                 bool parent_is_found = false;
                 parent = root_;
@@ -344,39 +326,16 @@ namespace tree {
                     if (parent->right_ != nullptr) {
                         iterator_ = parent->right_.get();
                         is_found = true;
-                    }
-                    else {
+                    } else {
                         iterator_ = parent;
                     }
-//                while (iterator_->left_ != nullptr) {
-//                    iterator_ = iterator_->left_.get();
-//                }
-//                    is_found = true;
-                }
-//                else if (iterator_->left_ == nullptr) {
-//                    iterator_ = iterator_->right_.get();
-//                    is_found = true;
-//
-//                }
-//                else if (parent->right_.get() == iterator_) {
-                else {
+                } else {
                     iterator_ = parent;
                     if (iterator_ == root_) {
                         iterator_ = nullptr;
                         is_found = true;
                     }
-//                    if (parent == root_) {
-//                        iterator_ = nullptr;
-//                        is_found = true;
-//                    }
-//                    is_repeat = true;
-//                }
-//            }
                 }
-//                else {
-//                    iterator_ = iterator_->right_.get();
-//                    is_found = true;
-//                }
             }
         }
         return *this;
@@ -404,7 +363,6 @@ namespace tree {
 
         InOrderTreeView(Tree<T> *t);
 
-//        InOrderTreeView(InOrder inOrder);
         InOrderTreeIterator<T> begin();
         InOrderTreeIterator<T> end();
         Node<T>* root_;
@@ -440,7 +398,6 @@ namespace tree {
 
         PostOrderTreeView(Tree<T> *t);
 
-//        InOrderTreeView(InOrder inOrder);
         PostOrderTreeIterator<T> begin();
         PostOrderTreeIterator<T> end();
         Node<T>* root_;
@@ -476,7 +433,6 @@ namespace tree {
 
         PreOrderTreeView(Tree<T> *t);
 
-//        InOrderTreeView(InOrder inOrder);
         PreOrderTreeIterator<T> begin();
         PreOrderTreeIterator<T> end();
         Node<T>* root_;
